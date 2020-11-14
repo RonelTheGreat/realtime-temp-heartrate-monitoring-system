@@ -4,11 +4,11 @@ const emergencyBtn = $("#emergencyBtn");
 const stopBtn = $("#stopBtn");
 
 emergencyBtn.click(() => {
-  socket.emit("emergency");
+  socket.emit("emergency", true);
 });
 
 stopBtn.click(() => {
-  socket.emit("stopEmergency");
+  socket.emit("emergency", false);
 });
 
 // simulate sending of data from device

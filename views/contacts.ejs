@@ -1,0 +1,31 @@
+<%- include("partials/top.ejs") %>
+<div class="container mb-5 mt-4">
+  <div class="d-flex mb-4 align-items-center">
+    <h4 class="text-capitalize mr-auto">Contacts</h4>
+    <a
+      class="btn btn-primary btn-sm text-capitalize"
+      href="/contacts/add"
+      role="button"
+      >add contact</a
+    >
+  </div>
+
+  <ul class="list-group">
+    <% contacts.forEach(function(contact){ %>
+    <li class="list-group-item d-flex align-items-center">
+      <span class="mr-auto text-capitalize">
+        <%= contact.name %> - <%= contact.number %>
+      </span>
+      <a role="button" href="/contacts/<%= contact._id %>/edit">
+        <i class="fas fa-edit"></i>
+      </a>
+    </li>
+    <% }); %>
+  </ul>
+
+  <a class="btn btn-secondary text-capitalize mt-3" href="/" role="button">
+    <i class="fas fa-arrow-left"></i>
+    <span>back</span>
+  </a>
+</div>
+<%- include("partials/bottom.ejs") %>

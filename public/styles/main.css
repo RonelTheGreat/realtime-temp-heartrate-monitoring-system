@@ -1,0 +1,89 @@
+.card-text {
+  font-size: 1.618rem;
+}
+
+.heart {
+  background-color: crimson;
+  display: inline-block;
+  height: 16px;
+  margin: 0 4px;
+  position: relative;
+  top: 0;
+  width: 16px;
+  -webkit-animation: heartbeat 1.5s infinite;
+  animation: heartbeat 1.5s infinite;
+}
+
+.heart::before,
+.heart::after {
+  content: "";
+  background-color: crimson;
+  border-radius: 50%;
+  height: 16px;
+  position: absolute;
+  width: 16px;
+}
+
+.heart:before {
+  top: -8px;
+  left: 0;
+}
+
+.heart::after {
+  left: 8px;
+  top: 0;
+}
+
+@-webkit-keyframes heartbeat {
+  0% {
+    -webkit-transform: scale(0.75) rotate(-45deg);
+    transform: scale(0.75) rotate(-45deg);
+  }
+  20% {
+    -webkit-transform: scale(1) rotate(-45deg);
+    transform: scale(1) rotate(-45deg);
+  }
+  40% {
+    -webkit-transform: scale(0.75) rotate(-45deg);
+    transform: scale(0.75) rotate(-45deg);
+  }
+  60% {
+    -webkit-transform: scale(1) rotate(-45deg);
+    transform: scale(1) rotate(-45deg);
+  }
+  80% {
+    -webkit-transform: scale(0.75) rotate(-45deg);
+    transform: scale(0.75) rotate(-45deg);
+  }
+  100% {
+    -webkit-transform: scale(0.75) rotate(-45deg);
+    transform: scale(0.75) rotate(-45deg);
+  }
+}
+
+@keyframes heartbeat {
+  0% {
+    -webkit-transform: scale(0.75) rotate(-45deg);
+    transform: scale(0.75) rotate(-45deg);
+  }
+  20% {
+    -webkit-transform: scale(1) rotate(-45deg);
+    transform: scale(1) rotate(-45deg);
+  }
+  40% {
+    -webkit-transform: scale(0.75) rotate(-45deg);
+    transform: scale(0.75) rotate(-45deg);
+  }
+  60% {
+    -webkit-transform: scale(1) rotate(-45deg);
+    transform: scale(1) rotate(-45deg);
+  }
+  80% {
+    -webkit-transform: scale(0.75) rotate(-45deg);
+    transform: scale(0.75) rotate(-45deg);
+  }
+  100% {
+    -webkit-transform: scale(0.75) rotate(-45deg);
+    transform: scale(0.75) rotate(-45deg);
+  }
+}

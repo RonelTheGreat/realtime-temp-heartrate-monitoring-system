@@ -1,0 +1,59 @@
+<%- include("partials/top.ejs") %>
+<div class="container mb-5 mt-4">
+  <h4 class="text-capitalize">add new contact</h4>
+
+  <%- include("partials/alert.ejs") %>
+
+  <form id="addingForm" class="mt-4">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" class="form-control" id="name" />
+    </div>
+
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input
+        type="text"
+        class="form-control"
+        id="username"
+        aria-describedby="usernameHelp"
+      />
+      <small id="usernameHelp" class="form-text text-muted"
+        >Use this username when signing in</small
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="number">Contact Number</label>
+      <input type="number" class="form-control" id="number" />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" class="form-control" id="password" />
+    </div>
+
+    <div class="form-group">
+      <label for="cpassword">Re-Type Password</label>
+      <input type="password" class="form-control" id="cpassword" />
+    </div>
+
+    <div class="d-flex">
+      <a
+        id="cancelBtn"
+        class="btn btn-secondary text-capitalize mr-auto"
+        href="/"
+        role="button"
+        >cancel</a
+      >
+      <button
+        id="submitBtn"
+        type="submit"
+        class="btn btn-primary text-capitalize"
+      >
+        submit
+      </button>
+    </div>
+  </form>
+</div>
+<%- include("partials/bottom.ejs") %>

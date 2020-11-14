@@ -1,0 +1,38 @@
+<%- include("partials/top.ejs") %>
+<div class="container mb-5 mt-4">
+  <h4 class="text-capitalize">update <%= contact.name %>'s number</h4>
+  <form id="editingForm" class="mt-4">
+    <div class="form-group">
+      <label for="number">Contact Number</label>
+
+      <%- include("partials/alert.ejs") %>
+
+      <input type="text" value="<%= contact._id %>" id="id" hidden />
+
+      <input
+        type="number"
+        value="<%= contact.number %>"
+        class="form-control"
+        id="number"
+      />
+    </div>
+
+    <div class="d-flex mt-4">
+      <a
+        id="cancelBtn"
+        class="btn btn-secondary text-capitalize mr-auto"
+        href="/contacts"
+        role="button"
+        >cancel</a
+      >
+      <button
+        id="submitBtn"
+        type="submit"
+        class="btn btn-primary text-capitalize"
+      >
+        submit
+      </button>
+    </div>
+  </form>
+</div>
+<%- include("partials/bottom.ejs") %>

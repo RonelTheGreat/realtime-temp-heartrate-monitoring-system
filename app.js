@@ -48,7 +48,6 @@ privateRoom.on("connection", (socket) => {
   socket.on("deviceConnect", async () => {
     const heartRate = await HeartRate.findOne({ name: "heartRate" }, "min max");
     heartRateThreshold = heartRate;
-    console.log(heartRateThreshold);
     socket.nickname = "device";
     deviceId = socket.id;
     isDeviceConnected = true;

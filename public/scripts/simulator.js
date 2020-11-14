@@ -22,3 +22,12 @@ setInterval(() => {
 
 // simulate device connection
 socket.emit("deviceConnect");
+
+// simulate setting min/max heart rate
+socket.on("newHeartRate", (heartRate) => {
+  // if on the actual device
+  // write to EEPROM
+  const storage = window.localStorage;
+  storage.setItem("min", heartRate.min);
+  storage.setItem("max", heartRate.max);
+});

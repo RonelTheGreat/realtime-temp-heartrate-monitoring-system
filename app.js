@@ -10,12 +10,13 @@ const app = express();
 const server = http.createServer(app);
 const io = socket(server);
 const PORT = process.env.PORT || 3000;
+const HeartRate = require("./models/heartRate");
 
 // mongodb connection
 mongoose.connect(process.env.DB_URL, { useNewUrlParser: true });
 const db = mongoose.connection;
 db.on("error", (err) => console.error(err));
-db.once("open", () => console.log("-- connected to DB"));
+db.once("open", async () => console.log("-- connected to DB"));
 
 // express middlewares
 app.use(cookieParser());
@@ -33,6 +34,7 @@ app.use("/simulator", require("./routes/simulator"));
 let connectedContacts = [];
 let isDeviceConnected = false;
 let hasEmergency = false;
+let heartRateThreshold = null;
 const privateRoom = io.of("/privateRoom");
 
 privateRoom.on("connection", (socket) => {
@@ -43,16 +45,31 @@ privateRoom.on("connection", (socket) => {
   });
 
   // if device connects
-  socket.on("deviceConnect", () => {
+  socket.on("deviceConnect", async () => {
+    const heartRate = await HeartRate.findOne({ name: "heartRate" }, "min max");
+    heartRateThreshold = heartRate;
+    console.log(heartRateThreshold);
     socket.nickname = "device";
+    deviceId = socket.id;
     isDeviceConnected = true;
     privateRoom.emit("isDeviceConnected", true);
   });
 
   // if heart rate is set
-  socket.on("setHeartRate", (heartRate) => {
-    // send heart rate threshold to device
-    privateRoom.to(device).emit("newHeartRate", heartRate);
+  socket.on("setHeartRate", async (heartRate) => {
+    const id = heartRateThreshold._id;
+
+    // save new heart rate to DB
+    const newHeartRate = await HeartRate.findByIdAndUpdate(
+      id,
+      {
+        $set: { min: heartRate.min, max: heartRate.max }
+      },
+      { new: true }
+    );
+    heartRateThreshold.min = newHeartRate.min;
+    heartRateThreshold.max = newHeartRate.max;
+    privateRoom.emit("newHeartRate", heartRateThreshold);
   });
 
   // data from device
@@ -88,6 +105,7 @@ privateRoom.on("connection", (socket) => {
   socket.on("disconnect", () => {
     if (socket.nickname === "device") {
       isDeviceConnected = false;
+      deviceId = null;
       privateRoom.emit("isDeviceConnected", false);
     }
   });

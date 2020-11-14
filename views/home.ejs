@@ -66,6 +66,7 @@
             </h5>
             <button
               type="button"
+              id="heartRateTogglerBtn"
               class="btn btn-outline-primary btn-sm text-capitalize mt-sm-2"
               data-toggle="collapse"
               data-target="#hearRate"
@@ -80,20 +81,30 @@
             <span> BPM</span>
           </p>
 
-          <div id="hearRate" class="input-group input-group-sm collapse mt-3">
+          <div id="heartRate" class="input-group input-group-sm collapse mt-3">
             <input
               type="number"
-              id="hearRateInput"
+              id="hearRateInputMin"
               class="form-control"
-              placeholder="Heart Rate"
+              placeholder="Min Heart Rate"
+              aria-label="Min Heart Rate"
+              value="<%= heartRate.min %>"
+              aria-describedby="setBpmButton"
+            />
+            <input
+              type="number"
+              id="hearRateInputMax"
+              class="form-control"
+              placeholder="Max Heart Rate"
               aria-label="Heart Rate"
+              value="<%= heartRate.max %>"
               aria-describedby="setBpmButton"
             />
             <div class="input-group-append">
               <button
                 class="btn btn-primary btn-sm text-uppercase"
                 type="button"
-                id="setBpmBtn"
+                id="setHeartRateBtn"
               >
                 set
               </button>

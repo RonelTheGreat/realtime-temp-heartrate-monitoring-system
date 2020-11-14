@@ -1,11 +1,15 @@
-$(window).on("unload", () => {
-  socket.emit("disconnected", name);
-});
 const name = $("#name").val();
+const minHeartRate = $("#hearRateInputMin");
+const maxHeartRate = $("#hearRateInputMax");
 
 const socket = io("/privateRoom");
 
 socket.emit("isActive", name);
+
+socket.on("newHeartRate", (newHeartRate) => {
+  minHeartRate.val(newHeartRate.min);
+  maxHeartRate.val(newHeartRate.max);
+});
 
 socket.on("emergencyAlert", (emergency) => {
   if (emergency) {
@@ -16,7 +20,6 @@ socket.on("emergencyAlert", (emergency) => {
     $("#emergencyBodyText").text("our tower is under attack");
     $("#closeBtn").css("display", "none");
   } else {
-    $("#emergencyNotif").modal();
     $("#emergencyTitle").removeClass("text-danger").addClass("text-success");
     $("#emergencyIcon").removeClass("fa-bell").addClass("fa-check-circle");
     $("#emergencyText").text("Oke kaayo na!");
@@ -60,10 +63,21 @@ socket.on("connectedContacts", (contacts) => {
   $("#contactList").append(contactListEl);
 });
 
-$("#setBpmBtn").click(() => {
-  const heartRate = $("#hearRateInput").val();
+$("#setHeartRateBtn").click(() => {
+  $("#heartRate").collapse("hide");
 
-  if (heartRate) {
-    socket.emit("setHeartRate", Number(heartRate));
+  if (minHeartRate && maxHeartRate) {
+    socket.emit("setHeartRate", {
+      min: minHeartRate.val(),
+      max: maxHeartRate.val()
+    });
   }
+});
+
+$("#heartRateTogglerBtn").click(() => {
+  $("#heartRate").collapse("toggle");
+});
+
+$(window).on("unload", () => {
+  socket.emit("disconnected", name);
 });

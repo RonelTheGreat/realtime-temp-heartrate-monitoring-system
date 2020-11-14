@@ -1,0 +1,22 @@
+<%- include("partials/top.ejs") %>
+<div
+  class="container d-flex flex-column justify-content-center w-md-25 min-vh-100"
+>
+  <button
+    id="emergencyBtn"
+    type="button"
+    class="btn btn-danger text-capitalize mb-2 py-3"
+  >
+    emergency
+  </button>
+  <button
+    id="stopBtn"
+    type="button"
+    class="btn btn-success text-capitalize mb-2 py-3"
+  >
+    stop emergency
+  </button>
+</div>
+<%- include("partials/scripts.ejs") %>
+<script src="/scripts/simulator.js"></script>
+<%- include("partials/bottom.ejs") %>

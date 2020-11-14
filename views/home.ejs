@@ -1,17 +1,8 @@
 <%- include("partials/top.ejs") %>
 <div class="container mb-5">
-  <button
-    type="button"
-    class="btn btn-primary btn-sm modal-dialog-centered"
-    data-toggle="modal"
-    data-target="#emergency"
-  >
-    emergency
-  </button>
-
   <div
     class="modal fade"
-    id="emergency"
+    id="emergencyNotif"
     data-backdrop="static"
     data-keyboard="false"
     tabindex="-1"
@@ -21,21 +12,16 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <!-- <h5 class="modal-title text-danger" id="emergencyLabel">
-            <i class="fas fa-bell"></i>
-            <span class="text-uppercase">emergency</span>
-          </h5> -->
-
-          <h5 class="modal-title text-success" id="emergencyLabel">
-            <i class="fas fa-check-circle"></i>
-            <span class="text-uppercase">Someone Defended the tower!</span>
+          <h5 id="emergencyTitle" class="modal-title text-danger">
+            <i id="emergencyIcon" class="fas fa-bell"></i>
+            <span id="emergencyText" class="text-uppercase">emergency</span>
           </h5>
         </div>
-        <!-- <div class="modal-body">
+        <div id="emergencyBodyText" class="modal-body">
           <h6>Our tower is under attack!</h6>
-        </div> -->
+        </div>
 
-        <div class="modal-footer">
+        <div id="closeBtn" class="modal-footer" style="display: none">
           <button type="button" class="btn btn-primary" data-dismiss="modal">
             Understood
           </button>
@@ -43,25 +29,10 @@
       </div>
     </div>
   </div>
-  <!-- <div
-    class="alert alert-danger text-capitalize text-center mt-2"
-    role="alert"
-  >
-    <i class="fas fa-exclamation-triangle"></i>
-    <span> patient is offline </span>
-  </div> -->
 
-  <div
-    class="alert alert-success text-capitalize text-center mt-2"
-    role="alert"
-  >
-    <i class="fas fa-wifi"></i>
-    <span> patient is online </span>
-  </div>
-
-  <div class="d-flex align-items-center">
+  <div class="d-flex align-items-center justify-content-end mt-3 mb-3">
     <a
-      class="btn btn-outline-secondary btn-sm text-capitalize mr-auto"
+      class="btn btn-outline-secondary btn-sm text-capitalize mr-2"
       href="/contacts"
       role="button"
       >view contacts</a
@@ -75,17 +46,59 @@
     >
   </div>
 
+  <div
+    id="alertStatus"
+    class="alert alert-danger text-capitalize text-center mt-2"
+    role="alert"
+  >
+    <i id="indicatorIcon" class="fas fa-exclamation-triangle"></i>
+    <span id="statusText">device is disconnected</span>
+  </div>
+
   <div class="row mt-4">
     <div class="col-sm-6 my-2">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title font-weight-normal text-capitalize">
-            <span class="heart"></span>
-            <span> Heart Rate</span>
-          </h5>
-          <p class="card-text">
-            <span>75 BPM</span>
+          <div class="card-title d-flex flex-wrap align-items-center">
+            <h5 class="font-weight-normal text-capitalize mr-auto mb-0">
+              <span class="heart"></span>
+              <span> Heart Rate</span>
+            </h5>
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-sm text-capitalize mt-sm-2"
+              data-toggle="collapse"
+              data-target="#hearRate"
+              aria-expanded="false"
+              aria-controls="hearRate"
+            >
+              set threshold
+            </button>
+          </div>
+          <p class="card-text mb-0 font-weight-bold">
+            <span id="bpm"></span>
+            <span> BPM</span>
           </p>
+
+          <div id="hearRate" class="input-group input-group-sm collapse mt-3">
+            <input
+              type="number"
+              id="hearRateInput"
+              class="form-control"
+              placeholder="Heart Rate"
+              aria-label="Heart Rate"
+              aria-describedby="setBpmButton"
+            />
+            <div class="input-group-append">
+              <button
+                class="btn btn-primary btn-sm text-uppercase"
+                type="button"
+                id="setBpmBtn"
+              >
+                set
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -97,8 +110,9 @@
             <i class="fas fa-temperature-low text-success"></i>
             <span>temperature</span>
           </h5>
-          <p class="card-text">
-            <span>36.7 &#8451;</span>
+          <p class="card-text font-weight-bold">
+            <span id="temperature"></span>
+            <span> &#8451;</span>
           </p>
         </div>
       </div>
@@ -111,8 +125,9 @@
             <i class="fas fa-battery-three-quarters text-success"></i>
             <span>battery percentage</span>
           </h5>
-          <p class="card-text">
-            <span>85%</span>
+          <p class="card-text font-weight-bold">
+            <span id="battery"></span>
+            <span>%</span>
           </p>
         </div>
       </div>
@@ -123,7 +138,7 @@
         <div class="card-body">
           <h5 class="card-title font-weight-normal text-capitalize">
             <i class="fas fa-mobile-alt"></i>
-            <span>online devices</span>
+            <span>online contacts</span>
           </h5>
           <ul
             id="contactList"
@@ -136,4 +151,6 @@
 </div>
 
 <input type="text" value="<%= name %>" id="name" hidden />
+<%- include("partials/scripts.ejs") %>
+<script src="/scripts/home.js"></script>
 <%- include("partials/bottom.ejs") %>

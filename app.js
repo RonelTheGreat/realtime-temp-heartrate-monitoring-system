@@ -27,26 +27,55 @@ app.set("view engine", "ejs");
 app.use("/contacts", require("./routes/contacts"));
 app.use("/", require("./routes/home"));
 app.use("/sign-in", require("./routes/signIn"));
+app.use("/simulator", require("./routes/simulator"));
 
 // socket
 let connectedContacts = [];
+let isDeviceConnected = false;
 const privateRoom = io.of("/privateRoom");
 
 privateRoom.on("connection", (socket) => {
+  // if emergency
+  socket.on("emergency", () => {
+    privateRoom.emit("emergencyAlert");
+  });
+
+  // if emergency is stopped
+  socket.on("stopEmergency", () => {
+    privateRoom.emit("stopEmergencyAlert");
+  });
+
+  // if device connects
+  socket.on("deviceConnect", () => {
+    socket.nickname = "device";
+    isDeviceConnected = true;
+    privateRoom.emit("isDeviceConnected", true);
+  });
+
+  // if heart rate is set
+  socket.on("setHeartRate", (heartRate) => {
+    // send heart rate threshold to device
+    privateRoom.to(device).emit("newHeartRate", heartRate);
+  });
+
+  // data from device
   socket.on("dataFromDevice", (data) => {
     privateRoom.emit("data", data);
   });
 
+  // if a contact is active
   socket.on("isActive", (contact) => {
     if (contact) {
       if (!connectedContacts.includes(contact)) {
         socket.nickname = contact;
         connectedContacts.push(contact);
         privateRoom.emit("connectedContacts", connectedContacts);
+        privateRoom.emit("isDeviceConnected", isDeviceConnected);
       }
     }
   });
 
+  // if a contact is disconnected
   socket.on("disconnected", (disconnectedContact) => {
     connectedContacts = connectedContacts.filter(
       (contact) => contact !== disconnectedContact
@@ -54,6 +83,14 @@ privateRoom.on("connection", (socket) => {
 
     if (connectedContacts.length > 0) {
       privateRoom.emit("connectedContacts", connectedContacts);
+    }
+  });
+
+  // if device is disconnected
+  socket.on("disconnect", () => {
+    if (socket.nickname === "device") {
+      isDeviceConnected = true;
+      privateRoom.emit("isDeviceConnected", false);
     }
   });
 });

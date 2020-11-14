@@ -7,21 +7,22 @@ const socket = io("/privateRoom");
 
 socket.emit("isActive", name);
 
-socket.on("emergencyAlert", () => {
-  $("#emergencyNotif").modal();
-  $("#emergencyTitle").removeClass("text-success").addClass("text-danger ");
-  $("#emergencyIcon").removeClass("fa-check-circle").addClass("fa-bell");
-  $("#emergencyText").text("emergency");
-  $("#emergencyBodyText").text("our tower is under attack");
-  $("#closeBtn").css("display", "none");
-});
-
-socket.on("stopEmergencyAlert", () => {
-  $("#emergencyTitle").removeClass("text-danger").addClass("text-success");
-  $("#emergencyIcon").removeClass("fa-bell").addClass("fa-check-circle");
-  $("#emergencyText").text("Oke kaayo na!");
-  $("#emergencyBodyText").text("myda na nagresponde nga guardian! chillax");
-  $("#closeBtn").css({ display: "flex", justifyContent: "flex-end" });
+socket.on("emergencyAlert", (emergency) => {
+  if (emergency) {
+    $("#emergencyNotif").modal();
+    $("#emergencyTitle").removeClass("text-success").addClass("text-danger ");
+    $("#emergencyIcon").removeClass("fa-check-circle").addClass("fa-bell");
+    $("#emergencyText").text("emergency");
+    $("#emergencyBodyText").text("our tower is under attack");
+    $("#closeBtn").css("display", "none");
+  } else {
+    $("#emergencyNotif").modal();
+    $("#emergencyTitle").removeClass("text-danger").addClass("text-success");
+    $("#emergencyIcon").removeClass("fa-bell").addClass("fa-check-circle");
+    $("#emergencyText").text("Oke kaayo na!");
+    $("#emergencyBodyText").text("myda na nagresponde nga guardian! chillax");
+    $("#closeBtn").css({ display: "flex", justifyContent: "flex-end" });
+  }
 });
 
 socket.on("isDeviceConnected", (isConnected) => {

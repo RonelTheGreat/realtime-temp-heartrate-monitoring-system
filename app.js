@@ -32,17 +32,14 @@ app.use("/simulator", require("./routes/simulator"));
 // socket
 let connectedContacts = [];
 let isDeviceConnected = false;
+let hasEmergency = false;
 const privateRoom = io.of("/privateRoom");
 
 privateRoom.on("connection", (socket) => {
   // if emergency
-  socket.on("emergency", () => {
-    privateRoom.emit("emergencyAlert");
-  });
-
-  // if emergency is stopped
-  socket.on("stopEmergency", () => {
-    privateRoom.emit("stopEmergencyAlert");
+  socket.on("emergency", (emergency) => {
+    hasEmergency = emergency;
+    privateRoom.emit("emergencyAlert", emergency);
   });
 
   // if device connects
@@ -69,6 +66,7 @@ privateRoom.on("connection", (socket) => {
       if (!connectedContacts.includes(contact)) {
         socket.nickname = contact;
         connectedContacts.push(contact);
+        privateRoom.emit("emergencyAlert", hasEmergency);
         privateRoom.emit("connectedContacts", connectedContacts);
         privateRoom.emit("isDeviceConnected", isDeviceConnected);
       }
@@ -89,7 +87,7 @@ privateRoom.on("connection", (socket) => {
   // if device is disconnected
   socket.on("disconnect", () => {
     if (socket.nickname === "device") {
-      isDeviceConnected = true;
+      isDeviceConnected = false;
       privateRoom.emit("isDeviceConnected", false);
     }
   });

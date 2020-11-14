@@ -45,6 +45,14 @@ socket.on("isDeviceConnected", (isConnected) => {
 });
 
 socket.on("data", (data) => {
+  compareTemperature(38, data.temperature);
+  compareHeartRate(
+    { min: minHeartRate.val(), max: maxHeartRate.val() },
+    data.heartRate
+  );
+
+  compareBattery(25, data.battery);
+
   $("#bpm").text(data.heartRate);
   $("#temperature").text(data.temperature);
   $("#battery").text(data.battery);
@@ -81,3 +89,55 @@ $("#heartRateTogglerBtn").click(() => {
 $(window).on("unload", () => {
   socket.emit("disconnected", name);
 });
+
+// functions for comparing data
+function compareTemperature(refTemp, temp) {
+  if (temp >= refTemp) {
+    $("#tempParent").removeClass("text-dark").addClass("text-danger");
+    $("#tempIcon").removeClass("text-success").addClass("text-danger");
+    $("#tempIcon")
+      .removeClass("fa-temperature-low")
+      .addClass("fa-temperature-high");
+  } else {
+    $("#tempParent").removeClass("text-danger").addClass("text-dark");
+    $("#tempIcon").removeClass("text-danger").addClass("text-success");
+    $("#tempIcon")
+      .removeClass("fa-temperature-high")
+      .addClass("fa-temperature-low");
+  }
+}
+
+function compareHeartRate(refHeartRate, heartRate) {
+  if (heartRate > refHeartRate.max) {
+    $("#heartRateParent")
+      .removeClass(["text-dark", "text-muted"])
+      .addClass("text-danger");
+    $(".heart").css("animation", "heartbeat 618ms infinite");
+  }
+
+  if (heartRate >= refHeartRate.min && heartRate <= refHeartRate.max) {
+    $("#heartRateParent").removeClass("text-danger").addClass("text-dark");
+    $(".heart").css("animation", "heartbeat 1.618s infinite");
+  }
+
+  if (heartRate < refHeartRate.min) {
+    $("#heartRateParent").removeClass("text-danger").addClass("text-muted");
+    $(".heart").css("animation", "heartbeat 2.168s infinite");
+  }
+}
+
+function compareBattery(refBattery, battery) {
+  if (battery <= refBattery) {
+    $("#batteryParent").removeClass("text-dark").addClass("text-danger");
+    $("#batteryIcon").removeClass("text-success").addClass("text-danger");
+    $("#batteryIcon")
+      .removeClass("fa-battery-three-quarters")
+      .addClass("fa-battery-quarter");
+  } else {
+    $("#batteryParent").removeClass("text-danger").addClass("text-dark");
+    $("#batteryIcon").removeClass("text-danger").addClass("text-success");
+    $("#batteryIcon")
+      .removeClass("fa-battery-quarter")
+      .addClass("fa-battery-three-quarters");
+  }
+}

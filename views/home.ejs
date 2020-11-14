@@ -76,7 +76,7 @@
               set threshold
             </button>
           </div>
-          <p class="card-text mb-0 font-weight-bold">
+          <p id="heartRateParent" class="card-text mb-0 font-weight-bold">
             <span id="bpm"></span>
             <span> BPM</span>
           </p>
@@ -118,10 +118,10 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title font-weight-normal text-capitalize">
-            <i class="fas fa-temperature-low text-success"></i>
+            <i id="tempIcon" class="fas fa-temperature-low text-success"></i>
             <span>temperature</span>
           </h5>
-          <p class="card-text font-weight-bold">
+          <p id="tempParent" class="card-text font-weight-bold">
             <span id="temperature"></span>
             <span> &#8451;</span>
           </p>
@@ -133,10 +133,13 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title font-weight-normal text-capitalize">
-            <i class="fas fa-battery-three-quarters text-success"></i>
+            <i
+              id="batteryIcon"
+              class="fas fa-battery-three-quarters text-success"
+            ></i>
             <span>battery percentage</span>
           </h5>
-          <p class="card-text font-weight-bold">
+          <p id="batteryParent" class="card-text font-weight-bold">
             <span id="battery"></span>
             <span>%</span>
           </p>

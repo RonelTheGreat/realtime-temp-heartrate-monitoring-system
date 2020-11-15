@@ -5,12 +5,17 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const socket = require("socket.io");
+const twilio = require("twilio")(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN
+);
 
 const app = express();
 const server = http.createServer(app);
 const io = socket(server);
 const PORT = process.env.PORT || 3000;
 const HeartRate = require("./models/heartRate");
+const Contact = require("./models/contact");
 
 // mongodb connection
 mongoose.connect(process.env.DB_URL, { useNewUrlParser: true });
@@ -35,6 +40,8 @@ let connectedContacts = [];
 let isDeviceConnected = false;
 let hasEmergency = false;
 let heartRateThreshold = null;
+let isNotifyingContacts = false;
+let heartRateSamples = 0;
 const privateRoom = io.of("/privateRoom");
 
 privateRoom.on("connection", (socket) => {
@@ -72,7 +79,49 @@ privateRoom.on("connection", (socket) => {
   });
 
   // data from device
-  socket.on("dataFromDevice", (data) => {
+  socket.on("dataFromDevice", async (data) => {
+    const { min, max } = heartRateThreshold;
+    const { heartRate } = data;
+
+    // if bad or abnormal heart rate
+    if ((heartRate < min || heartRate > max) && data) {
+      heartRateSamples++;
+      console.log(heartRateSamples);
+    }
+
+    // if good or normal heart rate but previously detected bad heart rate
+    // reset samples
+    if (heartRate >= min && heartRate <= max && heartRateSamples > 0) {
+      heartRateSamples = 0;
+    }
+
+    // if received consecutive bad heart rate
+    // notify contacts
+    if (heartRateSamples >= 3 && !isNotifyingContacts) {
+      isNotifyingContacts = true;
+      // twilio.messages
+      //   .create({
+      //     to: "+639771064377",
+      //     from: process.env.TWILIO_NUMBER,
+      //     body: "Test message"
+      //   })
+      //   .then((message) => {
+      //     console.log(message.sid);
+      //   })
+      //   .catch((err) => console.error(err));
+      // twilio.calls.create(
+      //   {
+      //     url: "http://demo.twilio.com/docs/voice.xml",
+      //     to: "+639514642872",
+      //     from: process.env.TWILIO_NUMBER
+      //   },
+      //   (err, call) => {
+      //     if (err) return console.log(err);
+      //     console.log(call.sid);
+      //   }
+      // );
+      console.log("notify contacts");
+    }
     privateRoom.emit("data", data);
   });
 

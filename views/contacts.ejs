@@ -9,13 +9,31 @@
       >add contact</a
     >
   </div>
+  <span class="text-muted">
+    <small>
+      Unverified contacts will not receive sms and voice notifications but can
+      continue to monitor.
+    </small>
+  </span>
 
-  <ul class="list-group">
+  <% if (contacts.length > 0) { %>
+  <ul class="list-group mt-4">
     <% contacts.forEach(function(contact){ %>
     <li class="list-group-item d-flex align-items-center">
-      <span class="mr-auto text-capitalize">
-        <%= contact.name %> - <%= contact.number %>
-      </span>
+      <div class="mr-auto">
+        <span class="mr-2 text-capitalize">
+          <%= contact.name %> - <%= contact.number %>
+        </span>
+
+        <% if (contact.verified) { %>
+        <span class="badge badge-success font-weight-light py-1">verified</span>
+        <% } else { %>
+        <span class="badge badge-danger font-weight-light py-1"
+          >unverified</span
+        >
+        <% } %>
+      </div>
+
       <a role="button" href="/contacts/<%= contact._id %>/edit">
         <i class="fas fa-edit"></i>
       </a>
@@ -23,7 +41,11 @@
     <% }); %>
   </ul>
 
-  <a class="btn btn-secondary text-capitalize mt-3" href="/" role="button">
+  <% } else { %>
+  <h5 class="text-capitalize text-muted">no contacts yet.</h5>
+  <% } %>
+
+  <a class="btn btn-secondary text-capitalize mt-5" href="/" role="button">
     <i class="fas fa-arrow-left"></i>
     <span>back</span>
   </a>

@@ -1,5 +1,7 @@
 $("#alert").hide();
 
+const id = $("#id").val();
+
 $("#editingForm").submit((e) => {
   e.preventDefault();
   $("#submitBtn").attr("disabled", true);
@@ -7,13 +9,8 @@ $("#editingForm").submit((e) => {
   $("#cancelBtn").attr("disabled", true);
   $("#alert").hide();
 
-  const number = $("#number").val();
-  const id = $("#id").val();
-
-  console.log(id, number);
-
   const data = {
-    number: number,
+    number: $("#number").val(),
     id: id
   };
 
@@ -30,6 +27,41 @@ $("#editingForm").submit((e) => {
         $("#submitBtn").attr("disabled", false);
         $("#submitBtn").text("submit");
         $("#cancelBtn").attr("disabled", false);
+        $("#alert").text(message).show();
+        scrollTo("alert");
+      } else {
+        window.location.replace("/contacts");
+      }
+    }
+  });
+});
+
+$("#delContactBtn").click((e) => {
+  e.preventDefault();
+  $("#delContactBtn").text("deleting ...");
+  $("#cancelBtn").attr("disabled", true);
+  $("#submitBtn").attr("disabled", true);
+  $("#delContactBtn").attr("disabled", true);
+  $("#alert").hide();
+
+  const data = {
+    id: id
+  };
+
+  $.ajax({
+    url: "/contacts/delete",
+    type: "POST",
+    dataType: "json",
+    contentType: "application/json",
+    data: JSON.stringify(data),
+    complete: function (data) {
+      const { success, message } = data.responseJSON;
+
+      if (!success) {
+        $("#delContactBtn").text("delete contact");
+        $("#submitBtn").attr("disabled", false);
+        $("#cancelBtn").attr("disabled", false);
+        $("#delContactBtn").attr("disabled", false);
         $("#alert").text(message).show();
         scrollTo("alert");
       } else {

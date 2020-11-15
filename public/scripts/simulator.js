@@ -32,6 +32,14 @@ $("#batteryBtn").click(() => {
   });
 });
 
+$("#badHeartRateBtn").click(() => {
+  socket.emit("dataFromDevice", {
+    temperature: 37,
+    heartRate: Math.floor(Math.random() * (200 - 120 + 1)) + 120,
+    battery: 87
+  });
+});
+
 // simulate sending of data from device
 // setInterval(() => {
 //   socket.emit("dataFromDevice", {

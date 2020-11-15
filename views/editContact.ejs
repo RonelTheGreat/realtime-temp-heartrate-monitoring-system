@@ -1,6 +1,15 @@
 <%- include("partials/top.ejs") %>
 <div class="container mb-5 mt-4">
-  <h4 class="text-capitalize">update <%= contact.name %>'s number</h4>
+  <div class="d-flex flex-wrap align-items-center">
+    <h4 class="text-capitalize mr-auto">update <%= contact.name %>'s number</h4>
+    <button
+      id="delContactBtn"
+      type="button"
+      class="btn btn-danger btn-sm text-capitalize"
+    >
+      delete contact
+    </button>
+  </div>
   <form id="editingForm" class="mt-4">
     <div class="form-group">
       <label for="number">Contact Number</label>
@@ -35,6 +44,6 @@
     </div>
   </form>
 </div>
-<%- include("partials/edit.ejs") %>
+<%- include("partials/scripts.ejs") %>
 <script src="/scripts/editContact.js"></script>
 <%- include("partials/bottom.ejs") %>

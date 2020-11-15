@@ -15,7 +15,6 @@ const server = http.createServer(app);
 const io = socket(server);
 const PORT = process.env.PORT || 3000;
 const HeartRate = require("./models/heartRate");
-const Contact = require("./models/contact");
 
 // mongodb connection
 mongoose.connect(process.env.DB_URL, { useNewUrlParser: true });
@@ -41,7 +40,8 @@ let isDeviceConnected = false;
 let hasEmergency = false;
 let heartRateThreshold = null;
 let isNotifyingContacts = false;
-let heartRateSamples = 0;
+var heartRateSamples = 0;
+var temperatureSamples = 0;
 const privateRoom = io.of("/privateRoom");
 
 privateRoom.on("connection", (socket) => {
@@ -80,49 +80,34 @@ privateRoom.on("connection", (socket) => {
 
   // data from device
   socket.on("dataFromDevice", async (data) => {
-    const { min, max } = heartRateThreshold;
-    const { heartRate } = data;
+    const isHRAbnormal = checkHeartRate(heartRateThreshold, data.heartRate);
+    const hasFever = checkTemperature(37.5, data.temperature);
+    const isLowBatt = checkBattery(25, data.battery);
 
-    // if bad or abnormal heart rate
-    if ((heartRate < min || heartRate > max) && data) {
-      heartRateSamples++;
-      console.log(heartRateSamples);
+    if (isHRAbnormal) {
+      notifyContacts("detected abnormal heart rate!");
     }
 
-    // if good or normal heart rate but previously detected bad heart rate
-    // reset samples
-    if (heartRate >= min && heartRate <= max && heartRateSamples > 0) {
-      heartRateSamples = 0;
+    if (hasFever) {
+      notifyContacts("has fever");
     }
 
-    // if received consecutive bad heart rate
-    // notify contacts
-    if (heartRateSamples >= 3 && !isNotifyingContacts) {
-      isNotifyingContacts = true;
-      // twilio.messages
-      //   .create({
-      //     to: "+639771064377",
-      //     from: process.env.TWILIO_NUMBER,
-      //     body: "Test message"
-      //   })
-      //   .then((message) => {
-      //     console.log(message.sid);
-      //   })
-      //   .catch((err) => console.error(err));
-      // twilio.calls.create(
-      //   {
-      //     url: "http://demo.twilio.com/docs/voice.xml",
-      //     to: "+639514642872",
-      //     from: process.env.TWILIO_NUMBER
-      //   },
-      //   (err, call) => {
-      //     if (err) return console.log(err);
-      //     console.log(call.sid);
-      //   }
-      // );
-      console.log("notify contacts");
+    if (isLowBatt) {
+      notifyContacts("low battery");
     }
+
     privateRoom.emit("data", data);
+    // twilio.calls.create(
+    //   {
+    //     url: "http://demo.twilio.com/docs/voice.xml",
+    //     to: "+639514642872",
+    //     from: process.env.TWILIO_NUMBER
+    //   },
+    //   (err, call) => {
+    //     if (err) return console.log(err);
+    //     console.log(call.sid);
+    //   }
+    // );
   });
 
   // if a contact is active
@@ -158,5 +143,64 @@ privateRoom.on("connection", (socket) => {
     }
   });
 });
+
+function checkHeartRate({ min, max }, heartRate) {
+  // if bad or abnormal heart rate
+  if (heartRate < min || heartRate > max) {
+    heartRateSamples++;
+    console.log(heartRateSamples);
+  }
+
+  // if good or normal heart rate but previously detected bad heart rate
+  // reset samples
+  if (heartRate >= min && heartRate <= max && heartRateSamples > 0) {
+    heartRateSamples = 0;
+  }
+
+  // if received consecutive bad heart rate
+  // notify contacts
+  if (heartRateSamples >= 3) {
+    return true;
+  }
+}
+
+function checkTemperature(refTemperature, temperature) {
+  if (temperature > refTemperature) {
+    temperatureSamples++;
+    console.log(temperatureSamples);
+  }
+
+  if (temperature < 37.5 && temperatureSamples > 0) {
+    temperatureSamples = 0;
+  }
+
+  if (temperatureSamples >= 3) {
+    return true;
+  }
+}
+
+function checkBattery(refBattery, battery) {
+  if (battery <= refBattery) {
+    return true;
+  }
+}
+
+async function notifyContacts(message) {
+  const verifiedContacts = await twilio.outgoingCallerIds.list();
+
+  Promise.all(
+    verifiedContacts.map((contact) => {
+      return twilio.messages.create({
+        to: contact.phoneNumber,
+        from: process.env.TWILIO_MESSAGE_SERVICE_SID,
+        body: message
+      });
+    })
+  )
+    .then(() => {
+      console.log("Messages sent!");
+    })
+    .catch((err) => console.error(err));
+}
 
 server.listen(PORT, () => console.log("Listening to port " + PORT));

@@ -1,0 +1,54 @@
+<%- include("partials/top.ejs") %>
+<div class="container mb-5 mt-4">
+  <h4 class="text-capitalize">add phone number</h4>
+
+  <%- include("partials/alert.ejs") %>
+
+  <form id="addPhoneForm" class="mt-4">
+    <div class="form-group">
+      <label for="phoneNumber">Phone Number</label>
+      <input
+        type="number"
+        class="form-control"
+        id="phoneNumber"
+        placeholder="Remove zero from the beginning of number"
+        aria-describedby="phoneNumberHelper"
+      />
+      <small id="phoneNumberHelper" class="form-text text-info"
+        >Please make sure you have access to this phone number</small
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="verificationCode">Verification Code</label>
+      <input
+        type="text"
+        class="form-control"
+        id="verificationCode"
+        disabled
+      />
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <button
+        id="sendCodeBtn"
+        type="button"
+        class="btn btn-primary text-capitalize"
+      >
+        Send Verication Code
+      </button>
+
+      <button
+      id="submitBtn"
+      type="button"
+      class="btn btn-primary text-capitalize"
+      hidden
+    >
+      Finish
+    </button>
+    </div>
+  </form>
+</div>
+<%- include("partials/scripts.ejs") %>
+<script src="/scripts/addPhoneNumber.js"></script>
+<%- include("partials/bottom.ejs") %>

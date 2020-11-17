@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const router = express.Router();
 const twilio = require("twilio")(
@@ -44,17 +46,10 @@ router.get("/add", verifyCookie, (req, res) => {
 });
 
 router.post("/add", verifyCookie, async (req, res) => {
-  const { name, number, username, password, cpassword } = req.body;
+  const { name, username, password, cpassword } = req.body;
 
   if (!name) {
     return res.json({ success: false, message: "Please provide your name!" });
-  }
-
-  if (!number) {
-    return res.json({
-      success: false,
-      message: "Please provide your contact number!"
-    });
   }
 
   if (!username) {
@@ -65,17 +60,75 @@ router.post("/add", verifyCookie, async (req, res) => {
     return res.json({ success: false, message: "Passwords dont match!" });
   }
 
-  const contact = await Contact({
+  try {
+    // const newContact = await contact.save();
+    res.json({ success: true, contact: req.body });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+router.get("/add-phone-number", verifyCookie, (req, res) => {
+  res.render("addPhone", { pageTitle: "Add Phone Number" });
+});
+
+router.post("/verify", verifyCookie, async (req, res) => {
+  const {
     name,
-    number,
     username,
+    phoneNumber,
+    verificationCode,
     password,
     cpassword
-  });
+  } = req.body;
+
+  const verification = await twilio.verify
+    .services(process.env.TWILIO_PHONE_VERIFICATION_SID)
+    .verificationChecks.create({
+      to: `+63${phoneNumber}`,
+      code: verificationCode
+    });
+
+  if (verification.status !== "approved") {
+    return res.json({
+      success: false,
+      message: "Verification code is invalid!"
+    });
+  }
+
+  console.log(verification);
+  return res.json({ success: true, message: "oke!" });
+});
+
+router.post("/request-verification-code", verifyCookie, async (req, res) => {
+  const { phoneNumber } = req.body;
+
+  if (
+    !phoneNumber ||
+    phoneNumber.toString().length < 10 ||
+    phoneNumber.toString().length > 10
+  ) {
+    return res.json({
+      success: false,
+      message: "Phone number not valid!"
+    });
+  }
 
   try {
-    const newContact = await contact.save();
-    res.json({ success: true, contact: newContact });
+    const verification = await twilio.verify
+      .services(process.env.TWILIO_PHONE_VERIFICATION_SID)
+      .verifications.create({ to: `+63${phoneNumber}`, channel: "sms" });
+
+    if (verification.status !== "pending") {
+      return res.json({
+        success: false,
+        message: "Something went wrong, try again ..."
+      });
+    }
+
+    console.log(verification);
+
+    res.json({ success: true });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

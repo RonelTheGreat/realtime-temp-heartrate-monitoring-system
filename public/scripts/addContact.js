@@ -3,20 +3,18 @@ $("#alert").hide();
 $("#addingForm").submit((e) => {
   e.preventDefault();
   $("#submitBtn").attr("disabled", true);
-  $("#submitBtn").text("adding ...");
+  $("#submitBtn").text("validating info ...");
   $("#cancelBtn").attr("disabled", true);
   $("#alert").hide();
 
   const name = $("#name").val();
   const username = $("#username").val();
-  const number = $("#number").val();
   const password = $("#password").val();
   const cpassword = $("#cpassword").val();
 
   const data = {
     name: name,
     username: username,
-    number: number,
     password: password,
     cpassword: cpassword
   };
@@ -37,7 +35,17 @@ $("#addingForm").submit((e) => {
         $("#alert").text(message).show();
         scrollTo("alert");
       } else {
-        window.location.replace("/");
+        const {
+          name,
+          username,
+          password,
+          cpassword
+        } = data.responseJSON.contact;
+        window.localStorage.setItem("name", name);
+        window.localStorage.setItem("username", username);
+        window.localStorage.setItem("password", password);
+        window.localStorage.setItem("cpassword", cpassword);
+        window.location.replace("/contacts/add-phone-number");
       }
     }
   });

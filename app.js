@@ -84,8 +84,54 @@ privateRoom.on("connection", (socket) => {
     const hasFever = checkTemperature(37.5, data.temperature);
     const isLowBatt = checkBattery(25, data.battery);
 
-    if (isHRAbnormal) {
-      notifyContacts("detected abnormal heart rate!");
+    if (isHRAbnormal && !isNotifyingContacts) {
+      isNotifyingContacts = true;
+      console.log("notifying contacts");
+
+      const verifiedContacts = await twilio.outgoingCallerIds.list();
+      let twimlNumbers = "";
+
+      verifiedContacts.forEach((contact) => {
+        twimlNumbers += `<Number>${contact.phoneNumber}</Number>`;
+      });
+
+      const twiml = `
+          <Response>
+            <Dial timeout="10" callerId="+639514642872">
+              ${twimlNumbers}
+            </Dial>
+          </Response>`;
+
+      twilio.calls.create(
+        {
+          twiml: twiml,
+          from: process.env.TWILIO_NUMBER
+        },
+        (err, call) => {
+          if (err) return console.log(err);
+          console.log(call.status);
+        }
+      );
+
+      // twilio.calls.create(
+      //   {
+      //     url: "http://demo.twilio.com/docs/voice.xml",
+      //     to: "+639514642872",
+      //     timeout: 10,
+      //     from: process.env.TWILIO_NUMBER
+      //   },
+      //   (err, call) => {
+      //     if (err) return console.log(err);
+      //     console.log(call.status);
+      //   }
+      // );
+
+      // setTimeout(() => {
+      //   console.log("DONE notifying contacts");
+      //   isNotifyingContacts = false;
+      //   heartRateSamples = 0;
+      // }, 3000);
+      // notifyContacts("detected abnormal heart rate!");
     }
 
     if (hasFever) {

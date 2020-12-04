@@ -2,8 +2,6 @@ const name = $("#name").val();
 const minHeartRate = $("#hearRateInputMin");
 const maxHeartRate = $("#hearRateInputMax");
 
-const socket = io("/privateRoom");
-
 socket.emit("isActive", name);
 
 socket.on("newHeartRate", (newHeartRate) => {

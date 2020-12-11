@@ -45,8 +45,36 @@ const socketEvents = {
       });
 
       // data from device
-      socket.on("dataFromDevice", async (data) => {
-        io.emit("data", data);
+      socket.on("dataFromDevice", async ({ data }) => {
+        const dataFromDevice = data.split(":");
+        
+        // if emergency
+        if (dataFromDevice[0] == "e") {
+          hasEmergency = true;
+          io.emit("emergencyAlert", true);
+          return;
+        }
+
+        // if stop emergency
+        if (dataFromDevice[0] == "se") {
+          hasEmergency = false;
+          io.emit("emergencyAlert", false);
+          return;
+        }
+
+        const heartRate = dataFromDevice[0];
+        const temperature = dataFromDevice[1];
+        const battery = dataFromDevice[2];
+
+        
+
+        const dataForVIew = {
+          heartRate,
+          temperature,
+          battery
+        };
+
+        io.emit("data", dataForVIew);
       });
 
       // if a contact is active

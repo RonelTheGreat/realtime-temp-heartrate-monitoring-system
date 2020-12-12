@@ -73,6 +73,10 @@ const socketEvents = {
         const temperature = dataFromDevice[1];
         const battery = dataFromDevice[2];
 
+        if (heartRateThreshold === null) {
+          return;
+        }
+        
         const abnormalHeartRate = checkHeartRate(heartRateThreshold, heartRate);
         const hasFever = checkTemperature(temperature);
 

@@ -15,13 +15,13 @@ socket.on("emergencyAlert", (emergency) => {
     $("#emergencyTitle").removeClass("text-success").addClass("text-danger ");
     $("#emergencyIcon").removeClass("fa-check-circle").addClass("fa-bell");
     $("#emergencyText").text("emergency");
-    $("#emergencyBodyText").text("our tower is under attack");
+    $("#emergencyBodyText").text("The patient needs immediate response!");
     $("#closeBtn").css("display", "none");
   } else {
     $("#emergencyTitle").removeClass("text-danger").addClass("text-success");
     $("#emergencyIcon").removeClass("fa-bell").addClass("fa-check-circle");
-    $("#emergencyText").text("Oke kaayo na!");
-    $("#emergencyBodyText").text("myda na nagresponde nga guardian! chillax");
+    $("#emergencyText").text("RESPONDED!");
+    $("#emergencyBodyText").text("The patient is already taken care of");
     $("#closeBtn").css({ display: "flex", justifyContent: "flex-end" });
   }
 });

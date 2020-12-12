@@ -1,12 +1,15 @@
 // for heart rate
 global.heartRateSamples = 0;
-global.heartRateSampleThreshold = 1;
+global.heartRateSampleThreshold = 10;
 global.heartRateThreshold = null;
 
 // for temperature
 global.refTemperature = 37.5;
-global.temperatureSamples = 0;
-global.temperatureSampleThreshold = 3;
+global.hasFeverSamples = 0;
+global.hasFeverSampleThreshold = 5;
+global.hasNoFeverSamples = 0;
+global.hasNoFeverSampleThreshold = 5;
+global.hasBeenNotifiedWithFever = false;
 
 // for battery
 global.refBattery = 20;

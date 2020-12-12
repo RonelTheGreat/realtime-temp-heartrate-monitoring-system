@@ -1,9 +1,9 @@
 $("#emergencyBtn").click(() => {
-  socket.emit("emergency", true);
+  socket.emit("dataFromDevice", { data: "e"});
 });
 
 $("#stopBtn").click(() => {
-  socket.emit("emergency", false);
+  socket.emit("dataFromDevice", { data: "se"});
 });
 
 $("#tempBtn").click(() => {
@@ -15,11 +15,7 @@ $("#tempBtn").click(() => {
 });
 
 $("#heartRateBtn").click(() => {
-  socket.emit("dataFromDevice", {
-    temperature: 37,
-    heartRate: Math.floor(Math.random() * (150 - 50 + 1)) + 50,
-    battery: 85
-  });
+  socket.emit("dataFromDevice", { data: `${Math.floor(Math.random() * (150 - 50 + 1)) + 50}:36.14:97`});
 });
 
 $("#batteryBtn").click(() => {
@@ -30,12 +26,9 @@ $("#batteryBtn").click(() => {
   });
 });
 
+
 $("#badHeartRateBtn").click(() => {
-  socket.emit("dataFromDevice", {
-    temperature: 37,
-    heartRate: Math.floor(Math.random() * (200 - 120 + 1)) + 120,
-    battery: 87
-  });
+  socket.emit("dataFromDevice", { data: `${Math.floor(Math.random() * (200 - 120 + 1)) + 120}:36.14:97`});
 });
 
 // simulate device connection

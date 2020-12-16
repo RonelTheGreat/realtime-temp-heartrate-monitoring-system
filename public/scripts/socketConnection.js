@@ -1,1 +1,1 @@
-const socket = io("http://192.168.254.102:8080");
+const socket = io("https://wearable-hbt.herokuapp.com/");

@@ -4,7 +4,8 @@
   "description": "A realtime temperature and heart beat monitoring system",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "node app",
+    "dev": "nodemon app"
   },
   "author": "rcob",
   "license": "ISC",

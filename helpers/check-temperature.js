@@ -1,20 +1,30 @@
 const checkTemperature = (temperature) => {
   // if temperature exceeds reference temperature
   if (temperature > refTemperature) {
-    temperatureSamples++;
+    hasFeverSamples++;
+  } else if (temperature < refTemperature) {
+    hasNoFeverSamples++;
   }
 
   // if good temperature but previously detected bad temperature
   // reset samples
-  if (temperature <= refTemperature && temperatureSamples > 0) {
-    temperatureSamples = 0;
+  if (temperature <= refTemperature && hasFeverSamples > 0) {
+    hasFeverSamples = 0;
+  } else if (temperature >= refTemperature && hasNoFeverSamples > 0) {
+    hasNoFeverSamples = 0;
   }
 
   // if received consecutive bad temperature
   // notify contacts
-  if (temperatureSamples >= temperatureSampleThreshold) {
+  if (hasFeverSamples >= hasFeverSampleThreshold) {
     console.log("reached needed temperature samples");
+    hasNoFeverSamples = 0;
     return true;
+  }
+
+  if (hasNoFeverSamples >= hasNoFeverSampleThreshold) {
+    hasFeverSamples = 0;
+    return false;
   }
 };
 

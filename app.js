@@ -11,7 +11,7 @@ const twilio = require("twilio")(
 const app = express();
 const http = require("http").Server(app);
 const io = socket(http);
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
 // helpers
 require("./helpers/global-variables");

@@ -47,10 +47,17 @@ const socketEvents = {
       // data from device
       socket.on("dataFromDevice", async ({ data }) => {
         const dataFromDevice = data.split(":");
-        
+
+        if (hasEmergency) {
+          setTimeout(() => {
+            notifyContacts("EMERGENCY! EMERGENCY! EMERGENCY!");
+          }, 5000)
+        }
+
         // if emergency
         if (dataFromDevice[0] == "e") {
           hasEmergency = true;
+
           io.emit("emergencyAlert", true);
           return;
         }
@@ -66,7 +73,27 @@ const socketEvents = {
         const temperature = dataFromDevice[1];
         const battery = dataFromDevice[2];
 
+        if (heartRateThreshold === null) {
+          return;
+        }
         
+        const abnormalHeartRate = checkHeartRate(heartRateThreshold, heartRate);
+        const hasFever = checkTemperature(temperature);
+
+        if (abnormalHeartRate) {
+          // notifyContacts(`Detected abnormal heart rate ${heartRate} BPM`);
+          console.log(`Detected abnormal heart rate ${heartRate} BPM`);
+        }
+
+        if (hasFever && !hasBeenNotifiedWithFever) {
+          hasBeenNotifiedWithFever = true;
+          notifyContacts(`The patient has fever with temperature of ${temperature} °C`);
+          console.log(`The patient has fever with temperature of ${temperature} °C`);
+        }
+
+        if (!hasFever) {
+          hasBeenNotifiedWithFever = false;
+        }
 
         const dataForVIew = {
           heartRate,

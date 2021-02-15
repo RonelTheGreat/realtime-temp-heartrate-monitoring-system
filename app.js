@@ -31,6 +31,7 @@ app.set("view engine", "ejs");
 
 // routes
 app.use("/contacts", require("./routes/contacts"));
+app.use("/access-points", require("./routes/accessPoints"));
 app.use("/", require("./routes/home"));
 app.use("/sign-in", require("./routes/signIn"));
 app.use("/simulator", require("./routes/simulator"));

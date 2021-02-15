@@ -49,9 +49,10 @@ const socketEvents = {
         const dataFromDevice = data.split(":");
 
         if (hasEmergency) {
-          setTimeout(() => {
-            notifyContacts("EMERGENCY! EMERGENCY! EMERGENCY!");
-          }, 5000)
+          console.log("EMERGENCY!!!!!");
+          // setTimeout(() => {
+          //   notifyContacts("EMERGENCY! EMERGENCY! EMERGENCY!");
+          // }, 5000)
         }
 
         // if emergency
@@ -76,7 +77,7 @@ const socketEvents = {
         if (heartRateThreshold === null) {
           return;
         }
-        
+
         const abnormalHeartRate = checkHeartRate(heartRateThreshold, heartRate);
         const hasFever = checkTemperature(temperature);
 
@@ -87,8 +88,12 @@ const socketEvents = {
 
         if (hasFever && !hasBeenNotifiedWithFever) {
           hasBeenNotifiedWithFever = true;
-          notifyContacts(`The patient has fever with temperature of ${temperature} °C`);
-          console.log(`The patient has fever with temperature of ${temperature} °C`);
+          // notifyContacts(
+          //   `The patient has fever with temperature of ${temperature} °C`
+          // );
+          console.log(
+            `The patient has fever with temperature of ${temperature} °C`
+          );
         }
 
         if (!hasFever) {
@@ -115,6 +120,37 @@ const socketEvents = {
             io.emit("isDeviceConnected", isDeviceConnected);
           }
         }
+      });
+
+      // on update wifi credentials
+      socket.on("updateWifiCreds", (data) => {
+        io.emit("updateWifiCreds", data);
+      });
+      // on update wifie credentials
+      // response from device
+      socket.on("hasUpdatedWifiCreds", () => {
+        io.emit("hasUpdatedWifiCreds");
+      });
+
+      // on get wifi credentials from device
+      socket.on("getWifiCredentials", () => {
+        io.emit("getWifiCredentials");
+      });
+      socket.on("wifiCredResponse", ({ data }) => {
+        const wifiCreds = data.split("|");
+        const firstAp = wifiCreds[0].split("~");
+        const secondAp = wifiCreds[1].split("~");
+        const payload = [
+          {
+            name: firstAp[0],
+            pass: firstAp[1]
+          },
+          {
+            name: secondAp[0],
+            pass: secondAp[1]
+          }
+        ];
+        io.emit("editWifiCreds", payload);
       });
 
       // if a contact is disconnected

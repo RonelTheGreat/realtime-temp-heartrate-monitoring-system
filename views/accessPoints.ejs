@@ -1,0 +1,88 @@
+<%- include("partials/top.ejs") %>
+<div class="container mb-5 mt-4">
+  <h4 class="text-capitalize mr-auto mb-4">Access Points</h4>
+
+  <div class="alert alert-info" role="alert">Loading access points...</div>
+
+  <div class="apList mt-3">
+    <span class="text-danger">
+      <small> You can only have 2 access points </small>
+    </span>
+
+    <div class="row row-cols-2 mb-3 mt-3">
+      <div class="col-6">AP name</div>
+      <div class="col-6">Password</div>
+    </div>
+    <!-- wifi name and password input -->
+    <!-- AP 1 -->
+    <div class="row row-cols-2">
+      <div class="col-6">
+        <input type="text" class="apnInput1 form-control form-control-sm" />
+      </div>
+
+      <div class="col-6">
+        <div class="input-group mb-3">
+          <input
+            type="password"
+            class="passInput1 form-control form-control-sm"
+            aria-label="Recipient's username"
+            aria-describedby="btnShowPassword"
+          />
+          <div class="input-group-append">
+            <button
+              class="btn btn-outline-secondary btn-sm"
+              type="button"
+              id="showPasswordBtn1"
+            >
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- AP 2 -->
+    <div class="row row-cols-2">
+      <div class="col-6">
+        <input type="text" class="apnInput2 form-control form-control-sm" />
+      </div>
+
+      <div class="col-6">
+        <div class="input-group mb-3">
+          <input
+            type="password"
+            class="passInput2 form-control form-control-sm"
+            aria-label="Recipient's username"
+            aria-describedby="btnShowPassword"
+          />
+          <div class="input-group-append">
+            <button
+              class="btn btn-outline-secondary btn-sm"
+              type="button"
+              id="showPasswordBtn2"
+            >
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- save button -->
+    <div class="d-flex align-items-center justify-content-end mt-2">
+      <button class="saveBtn btn btn-primary">Save Changes</button>
+    </div>
+  </div>
+
+  <a
+    class="backBtn btn btn-secondary text-capitalize mt-5"
+    href="/"
+    role="button"
+  >
+    <i class="fas fa-arrow-left"></i>
+    <span>back</span>
+  </a>
+</div>
+
+<%- include("partials/scripts.ejs") %>
+<script src="/scripts/accessPoints.js"></script>
+<%- include("partials/bottom.ejs") %>

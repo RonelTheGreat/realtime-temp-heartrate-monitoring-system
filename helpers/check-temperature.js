@@ -17,7 +17,6 @@ const checkTemperature = (temperature) => {
   // if received consecutive bad temperature
   // notify contacts
   if (hasFeverSamples >= hasFeverSampleThreshold) {
-    console.log("reached needed temperature samples");
     hasNoFeverSamples = 0;
     return true;
   }

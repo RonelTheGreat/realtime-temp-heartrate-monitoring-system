@@ -18,6 +18,7 @@ global.refBattery = 20;
 global.isDeviceConnected = false;
 global.hasEmergency = false;
 global.isNotifyingContacts = false;
+global.isDeviceReady = false;
 
 // for socket
 global.connectedContacts = [];

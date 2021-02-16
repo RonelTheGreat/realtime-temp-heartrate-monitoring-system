@@ -27,6 +27,16 @@ const socketEvents = {
         io.emit("isDeviceConnected", true);
       });
 
+      // if device is ready
+      socket.on("isDeviceReady", () => {
+        isDeviceReady = true;
+      });
+
+      // if device is halted
+      socket.on("haltDevice", () => {
+        isDeviceReady = false;
+      });
+
       // if heart rate is set
       socket.on("setHeartRate", async (heartRate) => {
         const id = heartRateThreshold._id;
@@ -48,47 +58,62 @@ const socketEvents = {
       socket.on("dataFromDevice", async ({ data }) => {
         const dataFromDevice = data.split(":");
 
-        if (hasEmergency) {
-          setTimeout(() => {
-            notifyContacts("EMERGENCY! EMERGENCY! EMERGENCY!");
-          }, 5000)
+        const emergencyState = dataFromDevice[0];
+        const heartRate = dataFromDevice[1];
+        const temperature = dataFromDevice[2];
+        const batteryLevel = dataFromDevice[3];
+
+        if (emergencyState.length > 1) {
+          return;
+        }
+        if (isNaN(Number(heartRate))) {
+          return;
+        }
+        if (isNaN(Number(temperature))) {
+          return;
+        }
+        if (isNaN(Number(batteryLevel))) {
+          return;
         }
 
         // if emergency
-        if (dataFromDevice[0] == "e") {
-          hasEmergency = true;
-
+        if (emergencyState == "e") {
+          if (!hasEmergency) {
+            hasEmergency = true;
+          }
+          setTimeout(() => {
+            if (isDeviceReady) {
+              console.log("EMERGENCY! EMERGENCY! EMERGENCY!");
+              // notifyContacts("EMERGENCY! EMERGENCY! EMERGENCY!");
+            }
+          }, 5000);
           io.emit("emergencyAlert", true);
           return;
         }
 
-        // if stop emergency
-        if (dataFromDevice[0] == "se") {
+        // stop emergency
+        if (emergencyState == "s" && hasEmergency) {
           hasEmergency = false;
           io.emit("emergencyAlert", false);
           return;
         }
 
-        const heartRate = dataFromDevice[0];
-        const temperature = dataFromDevice[1];
-        const battery = dataFromDevice[2];
-
         if (heartRateThreshold === null) {
           return;
         }
-        
         const abnormalHeartRate = checkHeartRate(heartRateThreshold, heartRate);
         const hasFever = checkTemperature(temperature);
-
-        if (abnormalHeartRate) {
+        if (abnormalHeartRate && isDeviceReady) {
           // notifyContacts(`Detected abnormal heart rate ${heartRate} BPM`);
           console.log(`Detected abnormal heart rate ${heartRate} BPM`);
         }
 
-        if (hasFever && !hasBeenNotifiedWithFever) {
+        if (hasFever && !hasBeenNotifiedWithFever && isDeviceReady) {
           hasBeenNotifiedWithFever = true;
-          notifyContacts(`The patient has fever with temperature of ${temperature} °C`);
-          console.log(`The patient has fever with temperature of ${temperature} °C`);
+          // notifyContacts(`The patient has fever with temperature of ${temperature} °C`);
+          console.log(
+            `The patient has fever with temperature of ${temperature} °C`
+          );
         }
 
         if (!hasFever) {
@@ -98,7 +123,7 @@ const socketEvents = {
         const dataForVIew = {
           heartRate,
           temperature,
-          battery
+          batteryLevel
         };
 
         io.emit("data", dataForVIew);
@@ -113,6 +138,7 @@ const socketEvents = {
             io.emit("emergencyAlert", hasEmergency);
             io.emit("connectedContacts", connectedContacts);
             io.emit("isDeviceConnected", isDeviceConnected);
+            io.emit("isDeviceReady", isDeviceReady);
           }
         }
       });

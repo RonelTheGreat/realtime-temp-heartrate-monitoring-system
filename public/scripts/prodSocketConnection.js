@@ -1,1 +1,1 @@
-const socket = io("https://wearable-hbt.herokuapp.com/");
+const socket = io.connect("https://wearable-hbt.herokuapp.com/");

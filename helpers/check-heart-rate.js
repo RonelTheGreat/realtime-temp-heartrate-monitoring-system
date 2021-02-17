@@ -11,9 +11,7 @@ const checkHeartRate = ({ min, max }, heartRate) => {
   }
 
   // if received consecutive bad heart rate
-  // notify contacts
   if (heartRateSamples >= heartRateSampleThreshold) {
-    console.log("reached needed heart rate samples");
     heartRateSamples = 0;
     return true;
   }

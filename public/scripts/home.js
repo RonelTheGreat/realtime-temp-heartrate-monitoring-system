@@ -42,6 +42,20 @@ socket.on("isDeviceConnected", (isConnected) => {
   }
 });
 
+socket.on("isDeviceReady", (isReady) => {
+  if (isReady) {
+    $(".deviceStateBtn")
+      .removeClass("btn-primary")
+      .addClass("btn-danger")
+      .text("Halt Device");
+  } else {
+    $(".deviceStateBtn")
+      .removeClass("btn-danger")
+      .addClass("btn-primary")
+      .text("Device is ready");
+  }
+});
+
 socket.on("data", (data) => {
   compareTemperature(38, data.temperature);
   compareHeartRate(
@@ -49,11 +63,11 @@ socket.on("data", (data) => {
     data.heartRate
   );
 
-  compareBattery(25, data.battery);
+  compareBattery(25, data.batteryLevel);
 
   $("#bpm").text(data.heartRate);
   $("#temperature").text(data.temperature);
-  $("#battery").text(data.battery);
+  $("#battery").text(data.batteryLevel);
 });
 
 socket.on("connectedContacts", (contacts) => {
@@ -82,6 +96,22 @@ $("#setHeartRateBtn").click(() => {
 
 $("#heartRateTogglerBtn").click(() => {
   $("#heartRate").collapse("toggle");
+});
+
+$(".deviceStateBtn").click(() => {
+  if ($(".deviceStateBtn").text() == "Halt Device") {
+    socket.emit("haltDevice");
+    $(".deviceStateBtn")
+      .removeClass("btn-danger")
+      .addClass("btn-primary")
+      .text("Device is ready");
+  } else {
+    socket.emit("isDeviceReady");
+    $(".deviceStateBtn")
+      .removeClass("btn-primary")
+      .addClass("btn-danger")
+      .text("Halt Device");
+  }
 });
 
 $(window).on("unload", () => {

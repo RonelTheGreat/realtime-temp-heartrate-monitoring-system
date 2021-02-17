@@ -13,6 +13,11 @@ global.hasBeenNotifiedWithFever = false;
 
 // for battery
 global.refBattery = 20;
+global.badBatterySampleThreshold = 5;
+global.badBatterySamples = 0;
+global.goodBatterySampleThreshold = 5;
+global.goodBatterySamples = 0;
+global.hasBeenNotifiedLowBatt = false;
 
 // for device
 global.isDeviceConnected = false;

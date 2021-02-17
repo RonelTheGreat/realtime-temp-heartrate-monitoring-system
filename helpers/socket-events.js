@@ -1,4 +1,5 @@
 const HeartRate = require("../models/heartRate");
+const checkBattery = require("./check-battery");
 const checkHeartRate = require("./check-heart-rate");
 const checkTemperature = require("./check-temperature");
 const notifyContacts = require("./notify-contacts");
@@ -103,21 +104,38 @@ const socketEvents = {
         }
         const abnormalHeartRate = checkHeartRate(heartRateThreshold, heartRate);
         const hasFever = checkTemperature(temperature);
+        const isLowBatt = checkBattery(batteryLevel);
+
+        // abnormal heart rate
         if (abnormalHeartRate && isDeviceReady) {
-          // notifyContacts(`Detected abnormal heart rate ${heartRate} BPM`);
+          notifyContacts(`Detected abnormal heart rate ${heartRate} BPM`);
           console.log(`Detected abnormal heart rate ${heartRate} BPM`);
         }
 
+        // has fever
         if (hasFever && !hasBeenNotifiedWithFever && isDeviceReady) {
           hasBeenNotifiedWithFever = true;
-          // notifyContacts(`The patient has fever with temperature of ${temperature} °C`);
+          notifyContacts(
+            `The patient has fever with temperature of ${temperature} °C`
+          );
           console.log(
             `The patient has fever with temperature of ${temperature} °C`
           );
         }
-
+        // no fever
         if (!hasFever) {
           hasBeenNotifiedWithFever = false;
+        }
+
+        // low batt
+        if (isLowBatt && !hasBeenNotifiedLowBatt && isDeviceReady) {
+          hasBeenNotifiedLowBatt = true;
+          notifyContacts(`Device battery is running low: ${batteryLevel}%`);
+          console.log(`Device battery is running low: ${batteryLevel}%`);
+        }
+        // not low batt
+        if (!isLowBatt) {
+          hasBeenNotifiedLowBatt = false;
         }
 
         const dataForVIew = {

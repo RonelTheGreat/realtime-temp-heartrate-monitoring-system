@@ -5,4 +5,8 @@
   crossorigin="anonymous"
 ></script>
 <script src="/socket.io/socket.io.js"></script>
+<% if (process.env.APP_IN_PRODUCTION) { %>
+<script src="/scripts/prodSocketConnection.js"></script>
+<% } else {%>
 <script src="/scripts/socketConnection.js"></script>
+<% } %>

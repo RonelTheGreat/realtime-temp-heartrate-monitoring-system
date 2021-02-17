@@ -84,8 +84,8 @@ const socketEvents = {
           }
           setTimeout(() => {
             if (isDeviceReady) {
+              notifyContacts("EMERGENCY! EMERGENCY! EMERGENCY!");
               console.log("EMERGENCY! EMERGENCY! EMERGENCY!");
-              // notifyContacts("EMERGENCY! EMERGENCY! EMERGENCY!");
             }
           }, 5000);
           io.emit("emergencyAlert", true);
